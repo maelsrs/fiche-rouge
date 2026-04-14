@@ -9,7 +9,7 @@ export default function HomeTabsLayout() {
             <Tabs.Screen
                 name="(home)"
                 options={{
-                    title: "Home",
+                    title: "Accueil",
                     headerShown: false,
                     tabBarIcon: ({ color }) => (
                         <FontAwesome name="home" size={24} color={color} />
@@ -17,12 +17,23 @@ export default function HomeTabsLayout() {
                 }}
             />
             <Tabs.Screen
-                name="search"
+                name="list"
                 options={{
-                    title: "Search",
+                    title: "Liste",
                     headerShown: false,
                     tabBarIcon: ({ color }) => (
-                        <FontAwesome name="search" size={24} color={color} />
+                        <FontAwesome name="list" size={24} color={color} />
+                    ),
+                }}
+            />
+            
+            <Tabs.Screen
+                name="quiz"
+                options={{
+                    title: "Quiz",
+                    headerShown: false,
+                    tabBarIcon: ({ color }) => (
+                        <FontAwesome name="question" size={24} color={color} />
                     ),
                 }}
             />
