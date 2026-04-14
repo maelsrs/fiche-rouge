@@ -1,4 +1,4 @@
-import "../../global.css"
+import "../../../global.css"
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 

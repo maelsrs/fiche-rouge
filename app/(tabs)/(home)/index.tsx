@@ -1,4 +1,4 @@
-import "../../global.css"
+import "../../../global.css"
 import { StyleSheet, Text, View, Pressable, FlatList, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
@@ -37,7 +37,7 @@ export default function Home() {
       <View style={styles.main}>
         <Text style={styles.title}>Hello World</Text>
         <Text style={styles.subtitle}>This is the first page of your app.</Text>
-        <Pressable style={styles.button} onPress={() => router.push("/home/details")}>
+        <Pressable style={styles.button} onPress={() => router.push("/(tabs)/(home)/details")}>
           <Text style={styles.buttonText}>Go to Details</Text>
         </Pressable>
         <FlatList
