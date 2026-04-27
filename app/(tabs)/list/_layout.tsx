@@ -1,9 +1,9 @@
 import { Stack } from "expo-router"
 
-export default function HomeStack() {
+export default function ListStack() {
     return (
-        <Stack>
-            <Stack.Screen name="index" options={{ headerTitle: "Liste" }} />
+        <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
         </Stack>
     )
 }

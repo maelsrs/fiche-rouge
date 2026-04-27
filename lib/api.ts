@@ -13,6 +13,23 @@ export interface Notice {
   };
 }
 
+export interface NoticeDetail extends Notice {
+  sex_id: string | null;
+  place_of_birth: string | null;
+  country_of_birth_id: string | null;
+  distinguishing_marks: string | null;
+  weight: number;
+  height: number;
+  eyes_colors_id: string | null;
+  hairs_id: string | null;
+  languages_spoken_ids: string[] | null;
+  arrest_warrants: {
+    charge: string;
+    issuing_country_id: string;
+    charge_translation: string | null;
+  }[];
+}
+
 interface NoticesResponse {
   _embedded: { notices: Notice[] };
   total: number;
@@ -32,4 +49,8 @@ export async function getNoticesByNationality(nationality: string): Promise<Noti
 export async function getLastNotices(count: number): Promise<Notice[]> {
   const data = await api<NoticesResponse>(`/red?resultPerPage=${count}`);
   return data._embedded.notices;
+}
+
+export async function getNoticeDetail(entityId: string): Promise<NoticeDetail> {
+  return api<NoticeDetail>(`/red/${entityId}`);
 }
