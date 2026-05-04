@@ -1,27 +1,25 @@
-import "../../../global.css"
-import { Text, View, Pressable } from "react-native"
-import { Redirect, useRouter } from "expo-router"
-import { useEffect, useState } from "react"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import "../../../global.css";
+import { Text, View, Pressable } from "react-native";
+import { Redirect, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Lit le flag "onboarded" en async storage
 const useIsOnboarded = () => {
-  const [value, setValue] = useState<boolean | null>(null)
+  const [value, setValue] = useState<boolean | null>(null);
 
   useEffect(() => {
-    AsyncStorage.getItem("onboarded").then((v) => setValue(Boolean(v)))
-  }, [])
+    AsyncStorage.getItem("onboarded").then((v) => setValue(Boolean(v)));
+  }, []);
 
-  return value
-}
+  return value;
+};
 
 export default function Home() {
-  const router = useRouter()
-  const isOnboarded = useIsOnboarded()
+  const router = useRouter();
+  const isOnboarded = useIsOnboarded();
 
-  // Tant qu'on sait pas, on n'affiche rien (évite un flash de la home)
-  if (isOnboarded === null) return null
-  if (!isOnboarded) return <Redirect href="/onboarding" />
+  if (isOnboarded === null) return null;
+  if (!isOnboarded) return <Redirect href="/onboarding" />;
 
   return (
     <View className="flex-1 items-center p-6">
@@ -38,7 +36,19 @@ export default function Home() {
             Go to Details
           </Text>
         </Pressable>
+
+        <Pressable
+          className="mt-3 bg-red-600 py-3 px-6 rounded-lg"
+          onPress={async () => {
+            await AsyncStorage.removeItem("onboarded");
+            router.replace("/onboarding");
+          }}
+        >
+          <Text className="text-white text-lg font-bold text-center">
+            Reset onboarding
+          </Text>
+        </Pressable>
       </View>
     </View>
-  )
+  );
 }
