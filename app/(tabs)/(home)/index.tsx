@@ -1,5 +1,11 @@
 import "../../../global.css";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -21,6 +27,10 @@ function formatDate(dob: string) {
 
 export default function Home() {
   const router = useRouter();
+  const isOnboarded = useIsOnboarded();
+
+  if (isOnboarded === null) return null;
+  if (!isOnboarded) return <Redirect href="/onboarding" />;
 
   const { data: notices = [], isLoading } = useQuery({
     queryKey: ["notices", "last"],
@@ -38,7 +48,7 @@ export default function Home() {
 
   return (
     <View className="flex-1 bg-slate-100">
-<SafeAreaView edges={["top"]} className="bg-[#1B2A4E]">
+      <SafeAreaView edges={["top"]} className="bg-[#1B2A4E]">
         <View className="px-5 pt-3 pb-6">
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center">
@@ -65,7 +75,10 @@ export default function Home() {
         </View>
       </SafeAreaView>
 
-      <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+      >
         {isLoading || !latest ? (
           <View className="items-center py-20">
             <ActivityIndicator color="#1B2A4E" />
@@ -177,9 +190,7 @@ function Tag({
   children: React.ReactNode;
 }) {
   const cls =
-    color === "red"
-      ? "bg-red-100 text-red-700"
-      : "bg-blue-100 text-blue-700";
+    color === "red" ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700";
   return (
     <View className={`px-2 py-1 rounded-md mr-2 mb-1 ${cls.split(" ")[0]}`}>
       <Text className={`text-[11px] font-bold ${cls.split(" ")[1]}`}>

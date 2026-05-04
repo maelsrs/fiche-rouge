@@ -64,7 +64,9 @@ async function api<T>(path: string): Promise<T> {
   return res.json();
 }
 
-export async function getNoticesByNationality(nationality: string): Promise<Notice[]> {
+export async function getNoticesByNationality(
+  nationality: string,
+): Promise<Notice[]> {
   const data = await api<NoticesResponse>(`/red?nationality=${nationality}`);
   return data._embedded.notices;
 }
