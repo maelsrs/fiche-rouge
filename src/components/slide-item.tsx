@@ -5,26 +5,26 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native"
+} from "react-native";
 import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   withTiming,
-} from "react-native-reanimated"
-import FontAwesome from "@expo/vector-icons/FontAwesome"
+} from "react-native-reanimated";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const { width: SLIDE_ITEM_WIDTH, height: SCREEN_HEIGHT } =
-  Dimensions.get("screen")
+  Dimensions.get("screen");
 
 interface SlideItemProps {
-  isActive: boolean
-  icon: React.ComponentProps<typeof FontAwesome>["name"]
-  eyebrow: string
-  title: string
-  body: string
-  submitLabel?: string
-  isSubmitting?: boolean
-  onSubmit?: () => Promise<void>
+  isActive: boolean;
+  icon: React.ComponentProps<typeof FontAwesome>["name"];
+  eyebrow: string;
+  title: string;
+  body: string;
+  submitLabel?: string;
+  isSubmitting?: boolean;
+  onSubmit?: () => Promise<void>;
 }
 
 export default function SlideItem({
@@ -38,7 +38,7 @@ export default function SlideItem({
   onSubmit,
 }: SlideItemProps) {
   // Anim : fade + petit slide vers le haut quand la slide devient active
-  const animatedValue = useDerivedValue(() => (isActive ? 1 : 0))
+  const animatedValue = useDerivedValue(() => (isActive ? 1 : 0));
   const animatedHero = useAnimatedStyle(() => ({
     opacity: withTiming(animatedValue.value, { duration: 500 }),
     transform: [
@@ -48,19 +48,17 @@ export default function SlideItem({
         }),
       },
     ],
-  }))
+  }));
 
   return (
     <View
       className="flex-1 overflow-hidden bg-[#1B2A4E]"
       style={{ width: SLIDE_ITEM_WIDTH }}
     >
-      {/* Watermark globe ICPO en arrière-plan (très discret) */}
       <View pointerEvents="none" style={styles.watermark}>
         <FontAwesome name="globe" size={520} color="rgba(255,255,255,0.04)" />
       </View>
 
-      {/* Hero animé : carte qui contient un badge rouge avec l'icône */}
       <Animated.View
         className="flex-1 items-center justify-center px-8"
         style={animatedHero}
@@ -73,14 +71,9 @@ export default function SlideItem({
         </View>
       </Animated.View>
 
-      {/* Texte + bouton */}
-      <View
-        style={{ paddingBottom: 56, paddingHorizontal: 32, gap: 28 }}
-      >
+      <View style={{ paddingBottom: 56, paddingHorizontal: 32, gap: 28 }}>
         <View style={{ gap: 12 }}>
-          <View
-            style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
-          >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
             <View style={styles.eyebrowDash} />
             <Text style={styles.eyebrow}>{eyebrow}</Text>
           </View>
@@ -108,7 +101,7 @@ export default function SlideItem({
         )}
       </View>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -186,4 +179,4 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: 0.5,
   },
-})
+});

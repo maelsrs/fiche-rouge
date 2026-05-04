@@ -90,7 +90,6 @@ export default function Onboarding() {
         </Text>
       </View>
 
-      {/* Dots cachés sur la dernière slide pour pas masquer le CTA */}
       {!isLastIndex && (
         <View
           className="absolute flex-row bottom-0 left-0 w-full items-center justify-center"
