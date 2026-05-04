@@ -35,54 +35,17 @@ interface NoticesResponse {
   total: number;
 }
 
-let debugged = false;
-async function debug() {
-  if (debugged) return;
-  debugged = true;
-  try {
-    const res = await fetch("https://httpbin.org/headers");
-    const json = await res.json();
-    console.log(
-      "[whoami] headers envoyés:",
-      JSON.stringify(json.headers, null, 2),
-    );
-  } catch (e) {
-    console.log("[whoami] failed:", e);
-  }
-}
-
 async function api<T>(path: string): Promise<T> {
-  await debug();
-  const url = `${BASE_URL}${path}`;
-  console.log("[api] →", url);
-
-  try {
-    const res = await fetch(url, {
-      headers: {
-        Accept: "application/json, text/plain, */*",
-        "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
-        Origin: "https://www.interpol.int",
-        Referer: "https://www.interpol.int/",
-      },
-    });
-
-    console.log("[api] ←", res.status, url);
-    console.log(
-      "[api] headers:",
-      JSON.stringify(Object.fromEntries(res.headers as any)),
-    );
-
-    if (!res.ok) {
-      const body = await res.text();
-      console.log("[api] error body:", body.slice(0, 500));
-      throw new Error(`API error: ${res.status}`);
-    }
-
-    return res.json();
-  } catch (e) {
-    console.log("[api] fetch failed:", e);
-    throw e;
-  }
+  const res = await fetch(`${BASE_URL}${path}`, {
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
+      Origin: "https://www.interpol.int",
+      Referer: "https://www.interpol.int/",
+    },
+  });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
 }
 
 export async function getNoticesByNationality(
