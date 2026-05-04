@@ -1,3 +1,5 @@
+import { fetch } from "expo/fetch";
+
 const BASE_URL = "https://ws-public.interpol.int/notices/v1";
 
 export interface Notice {
@@ -35,8 +37,29 @@ interface NoticesResponse {
   total: number;
 }
 
+const IOS_USER_AGENT =
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1";
+
+const COMMON_HEADERS = {
+  "User-Agent": IOS_USER_AGENT,
+  Accept: "application/json, text/plain, */*",
+  "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
+  Referer: "https://www.interpol.int/",
+  Origin: "https://www.interpol.int",
+};
+
+export const IMAGE_HEADERS = {
+  "User-Agent": IOS_USER_AGENT,
+  Accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+  "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
+  Referer: "https://www.interpol.int/",
+  Origin: "https://www.interpol.int",
+};
+
 async function api<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`);
+  const res = await fetch(`${BASE_URL}${path}`, {
+    headers: COMMON_HEADERS,
+  });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }

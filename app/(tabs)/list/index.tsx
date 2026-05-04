@@ -2,17 +2,18 @@ import "../../../global.css";
 import { useState } from "react";
 import {
   FlatList,
-  Image,
   Pressable,
+  RefreshControl,
   Text,
   TextInput,
   View,
 } from "react-native";
+import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { getLastNotices } from "@/lib/api";
+import { getLastNotices, IMAGE_HEADERS } from "@/lib/api";
 
 const FILTERS = ["Tous", "Hommes", "Femmes"];
 
@@ -21,10 +22,12 @@ export default function List() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("Tous");
 
-  const { data: notices = [] } = useQuery({
+  const { data: notices = [], refetch, isRefetching } = useQuery({
     queryKey: ["notices", "last"],
     queryFn: () => getLastNotices(30),
   });
+
+  console.log(notices);
 
   const filtered = notices.filter((n) => {
     const text = (
@@ -92,6 +95,7 @@ export default function List() {
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.entity_id}
+        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />}
         renderItem={({ item }) => (
           <Pressable
             onPress={() => router.push("/(tabs)/(home)/details")}
@@ -100,8 +104,11 @@ export default function List() {
             <View className="w-16 h-16 rounded-2xl bg-slate-300 overflow-hidden mr-4">
               {item._links.thumbnail?.href && (
                 <Image
-                  source={{ uri: item._links.thumbnail.href }}
-                  className="w-full h-full"
+                  source={{
+                    uri: item._links.thumbnail.href,
+                    headers: IMAGE_HEADERS,
+                  }}
+                  style={{ width: "100%", height: "100%" }}
                 />
               )}
             </View>
