@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Dimensions,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -56,7 +57,11 @@ export default function SlideItem({
       style={{ width: SLIDE_ITEM_WIDTH }}
     >
       <View pointerEvents="none" style={styles.watermark}>
-        <FontAwesome name="globe" size={520} color="rgba(255,255,255,0.04)" />
+        <Image
+          source={require("../../assets/interpol-logo.png")}
+          style={styles.watermarkImage}
+          resizeMode="contain"
+        />
       </View>
 
       <Animated.View
@@ -107,11 +112,16 @@ export default function SlideItem({
 const styles = StyleSheet.create({
   watermark: {
     position: "absolute",
-    top: SCREEN_HEIGHT * 0.52,
+    top: SCREEN_HEIGHT * 0.42,
     left: -120,
     right: -120,
     alignItems: "center",
     justifyContent: "center",
+  },
+  watermarkImage: {
+    width: 720,
+    height: 720,
+    opacity: 0.18,
   },
   iconCard: {
     width: 200,

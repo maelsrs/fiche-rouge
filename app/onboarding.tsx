@@ -25,7 +25,7 @@ export default function Onboarding() {
 
   const data = [
     {
-      icon: "globe" as const,
+      icon: "id-badge" as const,
       eyebrow: "Bienvenue",
       title: "Notices Interpol",
       body: "Les vraies notices rouges en circulation, tirées de la base publique d'Interpol.",
