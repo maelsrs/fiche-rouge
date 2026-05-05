@@ -1,11 +1,6 @@
 import "../../../global.css";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import { Skeleton } from "@/src/components/skeleton";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -14,6 +9,7 @@ import { Redirect, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLastNotices, IMAGE_HEADERS, Notice } from "@/lib/api";
+import { getCountryName } from "@/lib/labels";
 
 const useIsOnboarded = () => {
   const [value, setValue] = useState<boolean | null>(null);
@@ -52,7 +48,7 @@ export default function Home() {
 
   const goToDetail = (n: Notice) =>
     router.push({
-      pathname: "/(tabs)/(home)/details",
+      pathname: "/details",
       params: { id: n.entity_id },
     });
 
@@ -90,8 +86,20 @@ export default function Home() {
         contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
       >
         {isLoading || !latest ? (
-          <View className="items-center py-20">
-            <ActivityIndicator color="#1B2A4E" />
+          <View
+            className="bg-white rounded-2xl border border-slate-200 overflow-hidden"
+            style={{ gap: 12 }}
+          >
+            <Skeleton width="100%" height={208} radius={0} />
+            <View className="p-4" style={{ gap: 10 }}>
+              <Skeleton width="70%" height={22} />
+              <Skeleton width="50%" height={14} />
+              <View className="flex-row mt-2" style={{ gap: 8 }}>
+                <Skeleton width={70} height={22} radius={6} />
+                <Skeleton width={60} height={22} radius={6} />
+                <Skeleton width={60} height={22} radius={6} />
+              </View>
+            </View>
           </View>
         ) : (
           <Pressable
@@ -122,14 +130,20 @@ export default function Home() {
                 {latest.name}, {latest.forename}
               </Text>
               <Text className="text-sm text-slate-500 mt-1">
-                Recherché · {latest.nationalities.join(" · ")}
+                Recherché ·{" "}
+                {latest.nationalities
+                  ?.map(getCountryName)
+                  .filter(Boolean)
+                  .join(" · ") || "Inconnu"}
               </Text>
 
               <View className="flex-row flex-wrap mt-3">
                 <Tag color="red">Red Notice</Tag>
                 <Tag color="blue">{ageFrom(latest.date_of_birth)} ans</Tag>
-                {latest.nationalities[0] && (
-                  <Tag color="blue">{latest.nationalities[0]}</Tag>
+                {latest.nationalities?.[0] && (
+                  <Tag color="blue">
+                    {getCountryName(latest.nationalities[0])}
+                  </Tag>
                 )}
               </View>
 
@@ -182,7 +196,7 @@ export default function Home() {
                 {n.name.split(" ")[0]} {n.forename[0]}.
               </Text>
               <Text numberOfLines={1} className="text-[10px] text-slate-500">
-                {n.nationalities[0]}
+                {getCountryName(n.nationalities?.[0]) ?? "—"}
               </Text>
             </Pressable>
           ))}

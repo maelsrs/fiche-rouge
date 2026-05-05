@@ -10,6 +10,7 @@
     "postinstall": "git config merge.theirs.driver true 2>/dev/null || true"
   },
   "dependencies": {
+    "@cospired/i18n-iso-languages": "^4.2.0",
     "@expo/vector-icons": "^15.0.3",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@tanstack/eslint-plugin-query": "^5.99.0",
@@ -23,6 +24,7 @@
     "expo-splash-screen": "~31.0.13",
     "expo-status-bar": "~3.0.9",
     "expo-updates": "~29.0.17",
+    "i18n-iso-countries": "^7.14.0",
     "nativewind": "^4.2.3",
     "react": "19.1.0",
     "react-native": "0.81.5",

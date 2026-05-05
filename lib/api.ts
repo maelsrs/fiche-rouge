@@ -35,6 +35,22 @@ export interface NoticeDetail extends Notice {
 interface NoticesResponse {
   _embedded: { notices: Notice[] };
   total: number;
+  _links?: { next?: { href: string } };
+}
+
+export interface NoticesPage {
+  notices: Notice[];
+  total: number;
+  page: number;
+  hasMore: boolean;
+}
+
+export interface SearchParams {
+  page?: number;
+  resultPerPage?: number;
+  name?: string;
+  sexId?: "M" | "F";
+  nationality?: string;
 }
 
 const IOS_USER_AGENT =
@@ -76,6 +92,24 @@ export async function getLastNotices(count: number): Promise<Notice[]> {
   return data._embedded.notices;
 }
 
+export async function getNotices(params: SearchParams = {}): Promise<NoticesPage> {
+  const sp = new URLSearchParams();
+  const page = params.page ?? 1;
+  sp.set("page", String(page));
+  sp.set("resultPerPage", String(params.resultPerPage ?? 20));
+  if (params.name) sp.set("name", params.name);
+  if (params.sexId) sp.set("sexId", params.sexId);
+  if (params.nationality) sp.set("nationality", params.nationality);
+
+  const data = await api<NoticesResponse>(`/red?${sp.toString()}`);
+  return {
+    notices: data._embedded.notices,
+    total: data.total,
+    page,
+    hasMore: !!data._links?.next,
+  };
+}
+
 export async function getNoticeDetail(entityId: string): Promise<NoticeDetail> {
-  return api<NoticeDetail>(`/red/${entityId}`);
+  return api<NoticeDetail>(`/red/${encodeURIComponent(entityId)}`);
 }
