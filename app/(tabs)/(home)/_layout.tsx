@@ -7,7 +7,7 @@ export default function HomeStack() {
                 name="index"
                 options={{ headerShown: false }}
             />
-            <Stack.Screen name="details" options={{ headerTitle: "Details" }} />
+            <Stack.Screen name="details" options={{ headerShown: false }} />
         </Stack>
     )
 }
