@@ -98,7 +98,12 @@ export default function List() {
         refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => router.push("/(tabs)/(home)/details")}
+            onPress={() =>
+              router.push({
+                pathname: "/(tabs)/(home)/details",
+                params: { id: item.entity_id },
+              })
+            }
             className="flex-row items-center px-4 py-4 border-b border-slate-100"
           >
             <View className="w-16 h-16 rounded-2xl bg-slate-300 overflow-hidden mr-4">

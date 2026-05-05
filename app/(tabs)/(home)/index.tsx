@@ -10,8 +10,18 @@ import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLastNotices, IMAGE_HEADERS, Notice } from "@/lib/api";
+
+const useIsOnboarded = () => {
+  const [value, setValue] = useState<boolean | null>(null);
+  useEffect(() => {
+    AsyncStorage.getItem("onboarded").then((v) => setValue(Boolean(v)));
+  }, []);
+  return value;
+};
 
 function ageFrom(dob: string) {
   const [y, m, d] = dob.split("/").map(Number);
@@ -29,13 +39,13 @@ export default function Home() {
   const router = useRouter();
   const isOnboarded = useIsOnboarded();
 
-  if (isOnboarded === null) return null;
-  if (!isOnboarded) return <Redirect href="/onboarding" />;
-
   const { data: notices = [], isLoading } = useQuery({
     queryKey: ["notices", "last"],
     queryFn: () => getLastNotices(4),
   });
+
+  if (isOnboarded === null) return null;
+  if (!isOnboarded) return <Redirect href="/onboarding" />;
 
   const latest = notices[0];
   const recent = notices.slice(1, 4);
