@@ -1,14 +1,19 @@
 import { useState } from "react";
 import {
-  Dimensions,
   FlatList,
+  Modal,
   Pressable,
   ScrollView,
+  StatusBar,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -16,13 +21,15 @@ import { getNoticeDetail, getNoticeImages, IMAGE_HEADERS } from "@/lib/api";
 import { getCountryName, getLanguageName } from "@/lib/labels";
 import { Skeleton } from "@/src/components/skeleton";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const PHOTO_WIDTH = SCREEN_WIDTH - 32;
 
 export default function Details() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [zoomOpen, setZoomOpen] = useState(false);
+  const { width: screenWidth } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const photoWidth = screenWidth - 32;
 
   const { data: notice, isLoading } = useQuery({
     queryKey: ["notice", id],
@@ -41,7 +48,7 @@ export default function Details() {
 
   const onPhotoScroll = (event: any) => {
     const x = event.nativeEvent.contentOffset.x;
-    const i = Math.round(x / PHOTO_WIDTH);
+    const i = Math.round(x / photoWidth);
     if (i !== photoIndex) setPhotoIndex(i);
   };
 
@@ -109,7 +116,7 @@ export default function Details() {
                   renderItem={({ item }) => (
                     <Image
                       source={{ uri: item, headers: IMAGE_HEADERS }}
-                      style={{ width: PHOTO_WIDTH, height: "100%" }}
+                      style={{ width: photoWidth, height: "100%" }}
                       contentFit="cover"
                     />
                   )}
@@ -140,6 +147,17 @@ export default function Details() {
                     );
                   })}
                 </View>
+              )}
+
+              {/* Bouton agrandir, top-right */}
+              {photos.length > 0 && (
+                <Pressable
+                  onPress={() => setZoomOpen(true)}
+                  className="absolute top-3 right-3 w-9 h-9 rounded-full items-center justify-center"
+                  style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
+                >
+                  <FontAwesome name="expand" size={14} color="white" />
+                </Pressable>
               )}
             </View>
 
@@ -233,6 +251,72 @@ export default function Details() {
           )}
         </ScrollView>
       )}
+
+      {/* Visionneuse plein écran */}
+      <Modal
+        visible={zoomOpen}
+        onRequestClose={() => setZoomOpen(false)}
+        animationType="fade"
+        transparent
+        statusBarTranslucent
+      >
+        <StatusBar hidden />
+        <View className="flex-1 bg-black">
+          <FlatList
+            data={photos}
+            keyExtractor={(uri, i) => uri + i}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            initialScrollIndex={photoIndex}
+            getItemLayout={(_, i) => ({
+              length: screenWidth,
+              offset: screenWidth * i,
+              index: i,
+            })}
+            onScroll={(e) => {
+              const x = e.nativeEvent.contentOffset.x;
+              const i = Math.round(x / screenWidth);
+              if (i !== photoIndex) setPhotoIndex(i);
+            }}
+            scrollEventThrottle={20}
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  width: screenWidth,
+                  height: "100%",
+                }}
+              >
+                <Image
+                  source={{ uri: item, headers: IMAGE_HEADERS }}
+                  style={{ width: "100%", height: "100%" }}
+                  contentFit="contain"
+                />
+              </View>
+            )}
+          />
+
+          {/* Fermer (insets.top vu que SafeAreaView marche pas dans une Modal) */}
+          <View
+            className="absolute top-0 left-0 right-0 flex-row items-center justify-between px-4"
+            style={{ paddingTop: insets.top + 8, paddingBottom: 8 }}
+          >
+            <Pressable
+              onPress={() => setZoomOpen(false)}
+              className="w-10 h-10 rounded-full items-center justify-center"
+              style={{ backgroundColor: "rgba(255,255,255,0.15)" }}
+            >
+              <FontAwesome name="times" size={18} color="white" />
+            </Pressable>
+            {photos.length > 1 && (
+              <Text className="text-white/70 text-xs font-semibold tracking-widest">
+                {photoIndex + 1} / {photos.length}
+              </Text>
+            )}
+            <View className="w-10" />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
