@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo, useState } from "react";
 import {
   FlatList,
   Modal,
@@ -6,31 +6,30 @@ import {
   Text,
   TextInput,
   View,
-} from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
-import FontAwesome from "@expo/vector-icons/FontAwesome"
-import countries from "i18n-iso-countries"
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import countries from "i18n-iso-countries";
 
 interface Props {
-  visible: boolean
-  selected: string | null
-  onSelect: (code: string | null) => void
-  onClose: () => void
+  visible: boolean;
+  selected: string | null;
+  onSelect: (code: string | null) => void;
+  onClose: () => void;
 }
 
-// On bâtit la liste une fois — i18n-iso-countries renvoie un objet { FR: "France", ... }
 const ALL = Object.entries(countries.getNames("fr", { select: "official" }))
   .map(([code, name]) => ({ code, name }))
-  .sort((a, b) => a.name.localeCompare(b.name, "fr"))
+  .sort((a, b) => a.name.localeCompare(b.name, "fr"));
 
 export function CountryPicker({ visible, selected, onSelect, onClose }: Props) {
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase()
-    if (!q) return ALL
-    return ALL.filter((c) => c.name.toLowerCase().includes(q))
-  }, [search])
+    const q = search.trim().toLowerCase();
+    if (!q) return ALL;
+    return ALL.filter((c) => c.name.toLowerCase().includes(q));
+  }, [search]);
 
   return (
     <Modal
@@ -74,11 +73,10 @@ export function CountryPicker({ visible, selected, onSelect, onClose }: Props) {
       </SafeAreaView>
 
       <View className="flex-1 bg-white">
-        {/* Reset en tête de liste */}
         <Pressable
           onPress={() => {
-            onSelect(null)
-            onClose()
+            onSelect(null);
+            onClose();
           }}
           className="px-5 py-4 border-b border-slate-100 flex-row items-center justify-between"
         >
@@ -92,21 +90,19 @@ export function CountryPicker({ visible, selected, onSelect, onClose }: Props) {
           data={filtered}
           keyExtractor={(c) => c.code}
           renderItem={({ item }) => {
-            const isSelected = item.code === selected
+            const isSelected = item.code === selected;
             return (
               <Pressable
                 onPress={() => {
-                  onSelect(item.code)
-                  onClose()
+                  onSelect(item.code);
+                  onClose();
                 }}
                 className="px-5 py-4 border-b border-slate-100 flex-row items-center justify-between"
               >
                 <Text
                   className={
                     "text-base " +
-                    (isSelected
-                      ? "font-bold text-[#1B2A4E]"
-                      : "text-[#1B2A4E]")
+                    (isSelected ? "font-bold text-[#1B2A4E]" : "text-[#1B2A4E]")
                   }
                 >
                   {item.name}
@@ -115,10 +111,10 @@ export function CountryPicker({ visible, selected, onSelect, onClose }: Props) {
                   <FontAwesome name="check" size={16} color="#E63946" />
                 )}
               </Pressable>
-            )
+            );
           }}
         />
       </View>
     </Modal>
-  )
+  );
 }
