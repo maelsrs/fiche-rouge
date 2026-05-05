@@ -1,22 +1,49 @@
-import { Pressable, ScrollView, Text, View } from "react-native"
-import { Image } from "expo-image"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { useLocalSearchParams, useRouter } from "expo-router"
-import { useQuery } from "@tanstack/react-query"
-import FontAwesome from "@expo/vector-icons/FontAwesome"
-import { getNoticeDetail, IMAGE_HEADERS } from "@/lib/api"
-import { getCountryName, getLanguageName } from "@/lib/labels"
-import { Skeleton } from "@/src/components/skeleton"
+import { useState } from "react";
+import {
+  Dimensions,
+  FlatList,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import { Image } from "expo-image";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { getNoticeDetail, getNoticeImages, IMAGE_HEADERS } from "@/lib/api";
+import { getCountryName, getLanguageName } from "@/lib/labels";
+import { Skeleton } from "@/src/components/skeleton";
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const PHOTO_WIDTH = SCREEN_WIDTH - 32;
 
 export default function Details() {
-  const router = useRouter()
-  const { id } = useLocalSearchParams<{ id: string }>()
+  const router = useRouter();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const [photoIndex, setPhotoIndex] = useState(0);
 
   const { data: notice, isLoading } = useQuery({
     queryKey: ["notice", id],
     queryFn: () => getNoticeDetail(id),
     enabled: !!id,
-  })
+  });
+
+  const { data: images = [] } = useQuery({
+    queryKey: ["notice", id, "images"],
+    queryFn: () => getNoticeImages(id),
+    enabled: !!id,
+  });
+
+  const thumb = notice?._links.thumbnail?.href;
+  const photos = thumb ? [thumb, ...images.slice(1)] : images;
+
+  const onPhotoScroll = (event: any) => {
+    const x = event.nativeEvent.contentOffset.x;
+    const i = Math.round(x / PHOTO_WIDTH);
+    if (i !== photoIndex) setPhotoIndex(i);
+  };
 
   return (
     <View className="flex-1 bg-white">
@@ -33,10 +60,7 @@ export default function Details() {
             <Text className="text-white/60 text-[11px] font-bold tracking-widest">
               FICHE INTERPOL
             </Text>
-            <Text
-              className="text-white text-base font-bold"
-              numberOfLines={1}
-            >
+            <Text className="text-white text-base font-bold" numberOfLines={1}>
               {notice ? notice.name : "Chargement..."}
             </Text>
           </View>
@@ -46,10 +70,7 @@ export default function Details() {
       </SafeAreaView>
 
       {isLoading || !notice ? (
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{ padding: 16 }}
-        >
+        <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
           <View className="bg-white rounded-3xl border border-slate-200 overflow-hidden">
             <Skeleton width="100%" height={288} radius={0} />
             <View className="p-5" style={{ gap: 12 }}>
@@ -76,17 +97,49 @@ export default function Details() {
         >
           <View className="bg-white rounded-3xl border border-slate-200 overflow-hidden">
             <View className="w-full h-72 bg-slate-200 items-center justify-center">
-              {notice._links.thumbnail?.href ? (
-                <Image
-                  source={{
-                    uri: notice._links.thumbnail.href,
-                    headers: IMAGE_HEADERS,
-                  }}
-                  style={{ width: "100%", height: "100%" }}
-                  contentFit="cover"
+              {photos.length > 0 ? (
+                <FlatList
+                  data={photos}
+                  keyExtractor={(uri, i) => uri + i}
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  onScroll={onPhotoScroll}
+                  scrollEventThrottle={20}
+                  renderItem={({ item }) => (
+                    <Image
+                      source={{ uri: item, headers: IMAGE_HEADERS }}
+                      style={{ width: PHOTO_WIDTH, height: "100%" }}
+                      contentFit="cover"
+                    />
+                  )}
                 />
               ) : (
                 <FontAwesome name="user" size={64} color="#94A3B8" />
+              )}
+
+              {photos.length > 1 && (
+                <View
+                  className="absolute bottom-3 left-0 right-0 flex-row items-center justify-center"
+                  style={{ gap: 6 }}
+                >
+                  {photos.map((_, i) => {
+                    const active = i === photoIndex;
+                    return (
+                      <View
+                        key={i}
+                        style={{
+                          height: 6,
+                          width: active ? 18 : 6,
+                          borderRadius: 999,
+                          backgroundColor: active
+                            ? "#fff"
+                            : "rgba(255,255,255,0.5)",
+                        }}
+                      />
+                    );
+                  })}
+                </View>
               )}
             </View>
 
@@ -168,7 +221,8 @@ export default function Details() {
                     DÉLIVRÉ PAR
                   </Text>
                   <Text className="text-sm font-bold text-[#1B2A4E] mt-1">
-                    {getCountryName(w.issuing_country_id) ?? w.issuing_country_id}
+                    {getCountryName(w.issuing_country_id) ??
+                      w.issuing_country_id}
                   </Text>
                   <Text className="text-sm text-slate-600 mt-3 leading-5">
                     {w.charge_translation || w.charge}
@@ -180,7 +234,7 @@ export default function Details() {
         </ScrollView>
       )}
     </View>
-  )
+  );
 }
 
 function Field({
@@ -188,27 +242,23 @@ function Field({
   value,
   full,
 }: {
-  label: string
-  value: string | null | undefined
-  full?: boolean
+  label: string;
+  value: string | null | undefined;
+  full?: boolean;
 }) {
-  if (!value) return null
+  if (!value) return null;
   return (
-    <View
-      className={"px-2 mt-3 " + (full ? "w-full" : "w-1/2")}
-    >
+    <View className={"px-2 mt-3 " + (full ? "w-full" : "w-1/2")}>
       <Text className="text-[10px] font-bold tracking-widest text-slate-400">
         {label.toUpperCase()}
       </Text>
-      <Text className="text-sm font-semibold text-[#1B2A4E] mt-1">
-        {value}
-      </Text>
+      <Text className="text-sm font-semibold text-[#1B2A4E] mt-1">{value}</Text>
     </View>
-  )
+  );
 }
 
 function sexLabel(sex: string | null): string | null {
-  if (sex === "M") return "Masculin"
-  if (sex === "F") return "Féminin"
-  return null
+  if (sex === "M") return "Masculin";
+  if (sex === "F") return "Féminin";
+  return null;
 }

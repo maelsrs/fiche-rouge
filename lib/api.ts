@@ -113,3 +113,16 @@ export async function getNotices(params: SearchParams = {}): Promise<NoticesPage
 export async function getNoticeDetail(entityId: string): Promise<NoticeDetail> {
   return api<NoticeDetail>(`/red/${encodeURIComponent(entityId)}`);
 }
+
+interface ImagesResponse {
+  _embedded?: {
+    images?: { _links: { self: { href: string } } }[];
+  };
+}
+
+export async function getNoticeImages(entityId: string): Promise<string[]> {
+  const data = await api<ImagesResponse>(
+    `/red/${encodeURIComponent(entityId)}/images`,
+  );
+  return data._embedded?.images?.map((img) => img._links.self.href) ?? [];
+}
