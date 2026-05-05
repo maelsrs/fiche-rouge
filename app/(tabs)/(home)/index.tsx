@@ -1,11 +1,6 @@
 import "../../../global.css";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import { Skeleton } from "@/src/components/skeleton";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -90,8 +85,20 @@ export default function Home() {
         contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
       >
         {isLoading || !latest ? (
-          <View className="items-center py-20">
-            <ActivityIndicator color="#1B2A4E" />
+          <View
+            className="bg-white rounded-2xl border border-slate-200 overflow-hidden"
+            style={{ gap: 12 }}
+          >
+            <Skeleton width="100%" height={208} radius={0} />
+            <View className="p-4" style={{ gap: 10 }}>
+              <Skeleton width="70%" height={22} />
+              <Skeleton width="50%" height={14} />
+              <View className="flex-row mt-2" style={{ gap: 8 }}>
+                <Skeleton width={70} height={22} radius={6} />
+                <Skeleton width={60} height={22} radius={6} />
+                <Skeleton width={60} height={22} radius={6} />
+              </View>
+            </View>
           </View>
         ) : (
           <Pressable

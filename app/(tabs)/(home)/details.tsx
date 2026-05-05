@@ -1,16 +1,11 @@
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native"
+import { Pressable, ScrollView, Text, View } from "react-native"
 import { Image } from "expo-image"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useQuery } from "@tanstack/react-query"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
 import { getNoticeDetail, IMAGE_HEADERS } from "@/lib/api"
+import { Skeleton } from "@/src/components/skeleton"
 
 export default function Details() {
   const router = useRouter()
@@ -50,9 +45,29 @@ export default function Details() {
       </SafeAreaView>
 
       {isLoading || !notice ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color="#1B2A4E" />
-        </View>
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ padding: 16 }}
+        >
+          <View className="bg-white rounded-3xl border border-slate-200 overflow-hidden">
+            <Skeleton width="100%" height={288} radius={0} />
+            <View className="p-5" style={{ gap: 12 }}>
+              <Skeleton width="60%" height={28} />
+              <Skeleton width="40%" height={16} />
+              <View className="flex-row flex-wrap mt-3" style={{ gap: 12 }}>
+                <Skeleton width="45%" height={40} />
+                <Skeleton width="45%" height={40} />
+                <Skeleton width="45%" height={40} />
+                <Skeleton width="45%" height={40} />
+              </View>
+            </View>
+          </View>
+          <View className="mt-6" style={{ gap: 12 }}>
+            <Skeleton width="40%" height={20} />
+            <Skeleton width="100%" height={80} />
+            <Skeleton width="100%" height={80} />
+          </View>
+        </ScrollView>
       ) : (
         <ScrollView
           className="flex-1"

@@ -77,5 +77,5 @@ export async function getLastNotices(count: number): Promise<Notice[]> {
 }
 
 export async function getNoticeDetail(entityId: string): Promise<NoticeDetail> {
-  return api<NoticeDetail>(`/red/${entityId}`);
+  return api<NoticeDetail>(`/red/${encodeURIComponent(entityId)}`);
 }
