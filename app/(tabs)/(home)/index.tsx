@@ -9,6 +9,7 @@ import { Redirect, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLastNotices, IMAGE_HEADERS, Notice } from "@/lib/api";
+import { getCountryName } from "@/lib/labels";
 
 const useIsOnboarded = () => {
   const [value, setValue] = useState<boolean | null>(null);
@@ -47,7 +48,7 @@ export default function Home() {
 
   const goToDetail = (n: Notice) =>
     router.push({
-      pathname: "/(tabs)/(home)/details",
+      pathname: "/details",
       params: { id: n.entity_id },
     });
 
@@ -129,14 +130,20 @@ export default function Home() {
                 {latest.name}, {latest.forename}
               </Text>
               <Text className="text-sm text-slate-500 mt-1">
-                Recherché · {latest.nationalities.join(" · ")}
+                Recherché ·{" "}
+                {latest.nationalities
+                  ?.map(getCountryName)
+                  .filter(Boolean)
+                  .join(" · ") || "Inconnu"}
               </Text>
 
               <View className="flex-row flex-wrap mt-3">
                 <Tag color="red">Red Notice</Tag>
                 <Tag color="blue">{ageFrom(latest.date_of_birth)} ans</Tag>
-                {latest.nationalities[0] && (
-                  <Tag color="blue">{latest.nationalities[0]}</Tag>
+                {latest.nationalities?.[0] && (
+                  <Tag color="blue">
+                    {getCountryName(latest.nationalities[0])}
+                  </Tag>
                 )}
               </View>
 
@@ -189,7 +196,7 @@ export default function Home() {
                 {n.name.split(" ")[0]} {n.forename[0]}.
               </Text>
               <Text numberOfLines={1} className="text-[10px] text-slate-500">
-                {n.nationalities[0]}
+                {getCountryName(n.nationalities?.[0]) ?? "—"}
               </Text>
             </Pressable>
           ))}

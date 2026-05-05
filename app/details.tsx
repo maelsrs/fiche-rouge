@@ -5,6 +5,7 @@ import { useLocalSearchParams, useRouter } from "expo-router"
 import { useQuery } from "@tanstack/react-query"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
 import { getNoticeDetail, IMAGE_HEADERS } from "@/lib/api"
+import { getCountryName, getLanguageName } from "@/lib/labels"
 import { Skeleton } from "@/src/components/skeleton"
 
 export default function Details() {
@@ -115,7 +116,13 @@ export default function Details() {
                   label="Lieu de naissance"
                   value={notice.place_of_birth}
                 />
-                <Field label="Nationalité" value={notice.nationalities.join(", ")} />
+                <Field
+                  label="Nationalité"
+                  value={notice.nationalities
+                    ?.map(getCountryName)
+                    .filter(Boolean)
+                    .join(", ")}
+                />
                 <Field label="Cheveux" value={notice.hairs_id} />
                 <Field label="Yeux" value={notice.eyes_colors_id} />
                 <Field
@@ -128,7 +135,10 @@ export default function Details() {
                 />
                 <Field
                   label="Langues parlées"
-                  value={notice.languages_spoken_ids?.join(", ")}
+                  value={notice.languages_spoken_ids
+                    ?.map(getLanguageName)
+                    .filter(Boolean)
+                    .join(", ")}
                   full
                 />
                 <Field
@@ -158,7 +168,7 @@ export default function Details() {
                     DÉLIVRÉ PAR
                   </Text>
                   <Text className="text-sm font-bold text-[#1B2A4E] mt-1">
-                    {w.issuing_country_id}
+                    {getCountryName(w.issuing_country_id) ?? w.issuing_country_id}
                   </Text>
                   <Text className="text-sm text-slate-600 mt-3 leading-5">
                     {w.charge_translation || w.charge}
