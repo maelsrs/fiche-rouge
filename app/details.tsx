@@ -233,6 +233,30 @@ export default function Details() {
           )}
         </ScrollView>
       )}
+
+      <View
+        pointerEvents="none"
+        style={{
+          position: "absolute",
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+        }}
+      >
+        <Image
+          source={require("../assets/interpol-logo.png")}
+          style={{
+            position: "absolute",
+            bottom: -340,
+            left: -250,
+            right: -250,
+            height: 800,
+            opacity: 0.07,
+          }}
+          contentFit="contain"
+        />
+      </View>
     </View>
   );
 }
