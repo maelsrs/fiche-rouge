@@ -21,7 +21,6 @@ import { getNoticeDetail, getNoticeImages, IMAGE_HEADERS } from "@/lib/api";
 import { getCountryName, getLanguageName } from "@/lib/labels";
 import { Skeleton } from "@/src/components/skeleton";
 
-
 export default function Details() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -149,7 +148,6 @@ export default function Details() {
                 </View>
               )}
 
-              {/* Bouton agrandir, top-right */}
               {photos.length > 0 && (
                 <Pressable
                   onPress={() => setZoomOpen(true)}
@@ -252,7 +250,6 @@ export default function Details() {
         </ScrollView>
       )}
 
-      {/* Visionneuse plein écran */}
       <Modal
         visible={zoomOpen}
         onRequestClose={() => setZoomOpen(false)}
@@ -296,7 +293,6 @@ export default function Details() {
             )}
           />
 
-          {/* Fermer (insets.top vu que SafeAreaView marche pas dans une Modal) */}
           <View
             className="absolute top-0 left-0 right-0 flex-row items-center justify-between px-4"
             style={{ paddingTop: insets.top + 8, paddingBottom: 8 }}
