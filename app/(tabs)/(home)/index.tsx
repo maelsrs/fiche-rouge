@@ -58,13 +58,14 @@ export default function Home() {
         <View className="px-5 pt-3 pb-6">
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center">
-              <View className="w-9 h-9 rounded-full border-2 border-white items-center justify-center mr-3">
-                <FontAwesome name="globe" size={18} color="#fff" />
-              </View>
-              <Text className="text-white text-xl font-extrabold tracking-wider">
-                INTERPOL
-              </Text>
+              <Image
+                source={require("../../../assets/interpol-logo-footer.png")}
+                style={{ width: 40, height: 40, marginRight: 12 }}
+                contentFit="contain"
+                tintColor="#fff"
+              />
             </View>
+
             <View className="bg-red-600 px-3 py-1.5 rounded-md">
               <Text className="text-white text-xs font-extrabold">
                 RED NOTICE
@@ -72,11 +73,8 @@ export default function Home() {
             </View>
           </View>
 
-          <Text className="text-white/70 text-xs font-bold tracking-widest mt-5">
+          <Text className="text-white text-xl font-bold mt-4">
             DERNIÈRE PERSONNE RECHERCHÉE
-          </Text>
-          <Text className="text-white text-xl font-bold mt-1">
-            Notice rouge internationale
           </Text>
         </View>
       </SafeAreaView>
@@ -119,12 +117,6 @@ export default function Home() {
               )}
             </View>
 
-            <View className="bg-red-600 px-3 py-2">
-              <Text className="text-white text-xs font-extrabold tracking-wider">
-                ● WANTED — RED NOTICE INTERPOL
-              </Text>
-            </View>
-
             <View className="p-4">
               <Text className="text-lg font-extrabold text-[#1B2A4E]">
                 {latest.name}, {latest.forename}
@@ -159,14 +151,14 @@ export default function Home() {
 
         <Pressable
           onPress={() => router.push("/(tabs)/quiz")}
-          className="bg-red-600 rounded-2xl py-4 mt-5 items-center"
+          className="bg-red-600 rounded-2xl py-4 mt-10 items-center"
         >
           <Text className="text-white text-base font-extrabold tracking-wider">
             ▶ JOUER AU QUIZ
           </Text>
         </Pressable>
 
-        <Text className="text-slate-500 text-xs font-bold tracking-widest mt-6 mb-3">
+        <Text className="text-slate-500 text-xs font-bold tracking-widest mt-10 mb-3">
           PERSONNES RÉCENTES
         </Text>
 
@@ -202,6 +194,30 @@ export default function Home() {
           ))}
         </View>
       </ScrollView>
+
+      <View
+        pointerEvents="none"
+        style={{
+          position: "absolute",
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+        }}
+      >
+        <Image
+          source={require("../../../assets/interpol-logo.png")}
+          style={{
+            position: "absolute",
+            bottom: -400,
+            left: -250,
+            right: -250,
+            height: 800,
+            opacity: 0.07,
+          }}
+          contentFit="contain"
+        />
+      </View>
     </View>
   );
 }
