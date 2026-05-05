@@ -72,7 +72,6 @@ export default function Onboarding() {
         horizontal
       />
 
-      {/* Header fixe : INTERPOL + indicateur d'étape */}
       <View
         className="absolute top-0 left-0 right-0 flex-row items-center justify-between"
         style={{ paddingTop: top + 12, paddingHorizontal: 32 }}
